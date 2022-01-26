@@ -32,7 +32,12 @@ public class PatientController {
         return new SuccessMessageDTO<>(patientService.getPatientById(id));
     }
 
+    @GetMapping(value="/expose/{id}")
+    public SuccessMessageDTO<List<PatientResponseDTO>> getPatientByDoctorId(@PathVariable("id") Long id){
 
+        log.info("Enter into PatientController.getPatientByDoctorId() method");
+        return new SuccessMessageDTO<List<PatientResponseDTO>>(patientService.getPatientByDoctorId(id));
+    }
 
     @PostMapping(value = "/")
     public SuccessMessageDTO<PatientResponseDTO> createPatient(@RequestBody PatientRequestDTO patientRequestDTO) {

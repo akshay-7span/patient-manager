@@ -2,6 +2,7 @@ package com.sevenspan.patient.dto.responsedto.patientresponsedto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sevenspan.patient.dto.responsedto.treatmentresponsedto.TreatmentResponseDTO;
+import com.sevenspan.patient.entity.treatmententity.TreatmentEntity;
 import lombok.Data;
 
 import java.sql.Date;

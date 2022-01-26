@@ -2,21 +2,25 @@ package com.sevenspan.patient.service.patientservice;
 
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequestDTO;
 import com.sevenspan.patient.dto.responsedto.patientresponsedto.PatientResponseDTO;
+import com.sevenspan.patient.dto.responsedto.treatmentresponsedto.TreatmentResponseDTO;
 import com.sevenspan.patient.entitydtomapper.EntityDTOMapper;
 import com.sevenspan.patient.entity.patiententity.PatientEntity;
 import com.sevenspan.patient.exceptions.pmexceptions.PMRecordExistsException;
 import com.sevenspan.patient.exceptions.pmexceptions.PMRecordNotExistsException;
 import com.sevenspan.patient.repository.patientrepository.PatientRepository;
+import com.sevenspan.patient.repository.treatmentrepository.TreatmentRepository;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;//beanUtils//apachecommons
+import org.modelmapper.PropertyMap;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("patient_service")
 @Log4j2
 public class PatientService {
 
@@ -24,6 +28,9 @@ public class PatientService {
 
     @Autowired
     PatientRepository patientRepository;
+
+    @Autowired
+    TreatmentRepository treatmentRepository;
 
     //Get all the data from patient table
     @SneakyThrows(PMRecordNotExistsException.class)
@@ -51,6 +58,24 @@ public class PatientService {
                 .map(this::convertPatientEntitytoPatientResponseDTO)
                 .get();
         return patientResponseDTO;
+    }
+
+    //Get the data from patient table by doctorId
+    @SneakyThrows(PMRecordNotExistsException.class)
+    public List<PatientResponseDTO> getPatientByDoctorId(Long doctorId){
+
+        log.info("Enter into PatientService.getPatientByDoctorId() method");
+        List<PatientResponseDTO> patientResponseDTO=patientRepository
+                .findByDoctorId(doctorId)
+                .stream()
+                .map(this::convertPatientEntityToDTOWithTreatment)
+                .collect(Collectors.toList());
+
+        if(!patientResponseDTO.isEmpty()) {
+            return patientResponseDTO;
+        }else{
+            throw new PMRecordNotExistsException("No any records available");
+        }
     }
 
     //save data in patient table
@@ -99,5 +124,33 @@ public class PatientService {
 
         //PatientResponseDTO patientResponseDTO=modelMapper.map(patientEntity, PatientResponseDTO.class);
         return EntityDTOMapper.convert(patientEntity,PatientResponseDTO.class);
+//        PropertyMap propertyMap = new PropertyMap<SiteCreateUpdateRequest, Site>() {
+//
+//            @Override
+//            protected void configure() {
+//
+//                skip(destination.getId());
+//                skip(destination.getCreatedBy());
+//                skip(destination.getUpdatedBy());
+//                skip(destination.getCreatedAt());
+//                skip(destination.getUpdatedAt());
+//                skip(destination.getOrg());
+//                skip(destination.getTenant());
+//            }
+//        };
+    }
+
+    private PatientResponseDTO convertPatientEntityToDTOWithTreatment(PatientEntity patientEntity){
+        List<TreatmentResponseDTO> treatmentResponseDTOS=EntityDTOMapper
+                .mapAll(patientEntity.getTreatmentEntity(), TreatmentResponseDTO.class);
+        PropertyMap<PatientEntity, PatientResponseDTO> propertyMap = new PropertyMap <PatientEntity, PatientResponseDTO>() {
+            protected void configure() {
+
+                map().setTreatmentResponseDTO(
+                        treatmentResponseDTOS
+                );
+            }
+        };
+        return EntityDTOMapper.convertWithCondition(patientEntity,PatientResponseDTO.class,propertyMap);
     }
 }

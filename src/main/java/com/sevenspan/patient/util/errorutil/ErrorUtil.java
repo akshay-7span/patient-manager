@@ -20,6 +20,7 @@ public class ErrorUtil {
                 exception.getMessage(),
                 exception.getStackTrace());
 
+        exception.printStackTrace();
         return messageDTO;
     }
 

@@ -7,7 +7,7 @@ import java.sql.Date;
 
 @Data
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class TreatmentResponseDTO {
+public class TreatmentResponseDTO{
 
     private Long treatmentId;
     private Long patientId;
