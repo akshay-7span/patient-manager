@@ -15,6 +15,10 @@ import org.modelmapper.ModelMapper;//beanUtils//apachecommons
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,17 +66,20 @@ public class PatientService {
 
     //Get the data from patient table by doctorId
     @SneakyThrows(PMRecordNotExistsException.class)
-    public List<PatientResponseDTO> getPatientByDoctorId(Long doctorId){
+    public List<PatientResponseDTO> getPatientByDoctorId(Long doctorId,Integer pageNumber,Integer pageSize,String sortBy){
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize, Sort.by(sortBy));
 
         log.info("Enter into PatientService.getPatientByDoctorId() method");
-        List<PatientResponseDTO> patientResponseDTO=patientRepository
-                .findByDoctorId(doctorId)
-                .stream()
-                .map(this::convertPatientEntityToDTOWithTreatment)
-                .collect(Collectors.toList());
+        Page<PatientEntity> patientEntityPage=patientRepository
+                .findByDoctorId(doctorId,pageable);
 
-        if(!patientResponseDTO.isEmpty()) {
-            return patientResponseDTO;
+        if(patientEntityPage.hasContent()) {
+            return patientEntityPage
+                    .getContent()
+                    .stream()
+                    .map(this::convertPatientEntityToDTOWithTreatment)
+                    .collect(Collectors.toList());
         }else{
             throw new PMRecordNotExistsException("No any records available");
         }

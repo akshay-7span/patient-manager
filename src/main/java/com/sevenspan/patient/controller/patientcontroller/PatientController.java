@@ -3,6 +3,7 @@ package com.sevenspan.patient.controller.patientcontroller;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequestDTO;
 import com.sevenspan.patient.dto.responsedto.messagedto.SuccessMessageDTO;
 import com.sevenspan.patient.dto.responsedto.patientresponsedto.PatientResponseDTO;
+import com.sevenspan.patient.entity.patiententity.PatientEntity;
 import com.sevenspan.patient.service.patientservice.PatientService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,16 @@ public class PatientController {
         return new SuccessMessageDTO<>(patientService.getPatientById(id));
     }
 
-    @GetMapping(value="/expose/{id}")
-    public SuccessMessageDTO<List<PatientResponseDTO>> getPatientByDoctorId(@PathVariable("id") Long id){
+    @GetMapping(value="/expose")
+    public SuccessMessageDTO<List<PatientResponseDTO>> getPatientByDoctorId(
+            @RequestParam("id") Long id
+            ,@RequestParam("pageNumber") Integer pageNumber
+            ,@RequestParam("pageSize") Integer pageSize
+            ,@RequestParam("sortBy") String sortBy
+    ){
 
         log.info("Enter into PatientController.getPatientByDoctorId() method");
-        return new SuccessMessageDTO<List<PatientResponseDTO>>(patientService.getPatientByDoctorId(id));
+        return new SuccessMessageDTO<List<PatientResponseDTO>>(patientService.getPatientByDoctorId(id,pageNumber,pageSize,sortBy));
     }
 
     @PostMapping(value = "/")
