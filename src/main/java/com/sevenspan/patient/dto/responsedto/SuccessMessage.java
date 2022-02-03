@@ -1,6 +1,6 @@
-package com.sevenspan.patient.dto.responsedto.messagedto;
+package com.sevenspan.patient.dto.responsedto;
 
-import com.sevenspan.patient.enums.messagestatus.MessageStatus;
+import com.sevenspan.patient.enums.MessageStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SuccessMessageDTO<T> {
+public class SuccessMessage<T> {
 
     private Enum status;
     private String message;
     private T data;
 
-    public SuccessMessageDTO(T data){
+    public SuccessMessage(T data){
         this.data=data;
         this.status= MessageStatus.SUCCESS;
         this.message="Operation successful";

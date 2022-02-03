@@ -1,4 +1,4 @@
-package com.sevenspan.patient.exceptions.pmexceptions;
+package com.sevenspan.patient.exceptions;
 
 public class PMRecordNotExistsException extends Exception{
 

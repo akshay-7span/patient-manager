@@ -1,14 +1,14 @@
-package com.sevenspan.patient.dto.requestdto.treatmentdto;
+package com.sevenspan.patient.dto.requestdto;
 
 import lombok.Data;
 
 import java.sql.Date;
 
 @Data
-public class TreatmentRequestDTO {
+public class TreatmentRequest {
 
-    private Long treatmentId;
-    private Long patientId;
+    private String treatmentId;
+    private String patientId;
     private String disease;
     private String symptoms;
     private String duration;

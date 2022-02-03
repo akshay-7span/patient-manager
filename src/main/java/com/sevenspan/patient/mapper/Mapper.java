@@ -1,9 +1,8 @@
-package com.sevenspan.patient.entitydtomapper;
+package com.sevenspan.patient.mapper;
 
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 @NoArgsConstructor
-public class EntityDTOMapper {
+public class Mapper {
 
     static ModelMapper modelMapper=new ModelMapper();
 

@@ -1,9 +1,9 @@
-package com.sevenspan.patient.entity.patiententity;
+package com.sevenspan.patient.entity;
 
-import com.sevenspan.patient.entity.treatmententity.TreatmentEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -16,14 +16,25 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "patient")
-@Table(name = "patient")
+@NamedQueries({
+        @NamedQuery(name="findByEmailAddress",
+                query="SELECT * FROM patient p WHERE p.email = :email"),
+        @NamedQuery(name="findByAge",
+                query="SELECT * FROM patient p WHERE p.age <= :age"),
+})
 public class PatientEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "patient_id")
-    @NotBlank(message = "Id should not be null")
-    private Long patientId;
+    private String patientId;
+
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "patient_id")
+//    @NotBlank(message = "Id should not be null")
+//    private Long patientId;
 
     @Column(name="doctor_id")
     private Long doctorId;

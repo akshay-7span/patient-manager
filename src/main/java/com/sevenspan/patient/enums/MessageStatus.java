@@ -1,4 +1,4 @@
-package com.sevenspan.patient.enums.messagestatus;
+package com.sevenspan.patient.enums;
 
 public enum MessageStatus {
     SUCCESS,FAILURE

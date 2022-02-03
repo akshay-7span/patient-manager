@@ -1,4 +1,4 @@
-package com.sevenspan.patient.dto.responsedto.messagedto;
+package com.sevenspan.patient.dto.responsedto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorMessageDTO<T> {
+public class ErrorMessage<T> {
 
     private Enum status;
     private String message;
     private T data;
 
-    public ErrorMessageDTO(Enum status, String message) {
+    public ErrorMessage(Enum status, String message) {
         this.status = status;
         this.message = message;
     }

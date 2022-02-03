@@ -1,8 +1,5 @@
-package com.sevenspan.patient.dto.responsedto.patientresponsedto;
+package com.sevenspan.patient.dto.responsedto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sevenspan.patient.dto.responsedto.treatmentresponsedto.TreatmentResponseDTO;
-import com.sevenspan.patient.entity.treatmententity.TreatmentEntity;
 import lombok.Data;
 
 import java.sql.Date;
@@ -10,9 +7,9 @@ import java.util.List;
 
 @Data
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PatientResponseDTO {
+public class PatientResponse {
 
-    private Long patientId;
+    private String patientId;
     private Long doctorId;
     private String firstName;
     private String lastName;
@@ -26,5 +23,5 @@ public class PatientResponseDTO {
     private String prefferedLanguage;
     private Date dateCreated;
     private Date dateModified;
-    private List<TreatmentResponseDTO> treatmentResponseDTO;
+    private List<TreatmentResponse> treatmentResponseDTO;
 }

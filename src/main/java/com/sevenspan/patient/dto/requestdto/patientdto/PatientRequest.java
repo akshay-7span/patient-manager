@@ -5,9 +5,9 @@ import lombok.Data;
 import java.sql.Date;
 
 @Data
-public class PatientRequestDTO {
+public class PatientRequest {
 
-    private Long patientId;
+    private String patientId;
     private Long doctorId;
     private String firstName;
     private String lastName;

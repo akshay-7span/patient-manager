@@ -1,4 +1,4 @@
-package com.sevenspan.patient.service.actuatorservice;
+package com.sevenspan.patient.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;

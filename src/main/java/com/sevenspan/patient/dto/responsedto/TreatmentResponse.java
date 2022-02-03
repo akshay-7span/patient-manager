@@ -1,16 +1,15 @@
-package com.sevenspan.patient.dto.responsedto.treatmentresponsedto;
+package com.sevenspan.patient.dto.responsedto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.sql.Date;
 
 @Data
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class TreatmentResponseDTO{
+public class TreatmentResponse {
 
-    private Long treatmentId;
-    private Long patientId;
+    private String treatmentId;
+    private String patientId;
     private String disease;
     private String symptoms;
     private String duration;
