@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface PatientRepositoryCustom {
 
-    List<PatientEntity> findPatientWithGivenFilter(PatientFilterRequest patientFilterDTO);
+    List<PatientEntity> findPatientWithGivenFilter(PatientFilterRequest patientFilterRequest);
+
+    List<PatientEntity> findByEmailAddress(String email);
+
+    List<PatientEntity> findByAgeLessThan(Integer age);
 
 }

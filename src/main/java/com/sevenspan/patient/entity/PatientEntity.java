@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -18,23 +19,17 @@ import java.util.List;
 @Entity(name = "patient")
 @NamedQueries({
         @NamedQuery(name="findByEmailAddress",
-                query="SELECT * FROM patient p WHERE p.email = :email"),
+                query="FROM patient p WHERE p.email = ?1"),
         @NamedQuery(name="findByAge",
-                query="SELECT * FROM patient p WHERE p.age <= :age"),
+                query="SELECT p FROM patient p WHERE p.age <= ?1"),
 })
 public class PatientEntity {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "patient_id")
-    private String patientId;
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "patient_id")
-//    @NotBlank(message = "Id should not be null")
-//    private Long patientId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    @NotBlank(message = "Id should not be null")
+    private Long id;
 
     @Column(name="doctor_id")
     private Long doctorId;
@@ -78,26 +73,16 @@ public class PatientEntity {
     @Column(name = "date_modified")
     private Date dateModified;
 
+    @Column(name = "x_id",unique = true, nullable = false,updatable = false)
+    private String xId;
+
     @OneToMany(cascade = {CascadeType.REMOVE})
-    @JoinColumn(name = "patient_id", referencedColumnName = "patient_id")
+    @JoinColumn(name = "patient_id", referencedColumnName = "id")
     private List<TreatmentEntity> treatmentEntity;
 
-    @Override
-    public String toString() {
-        return "PatientEntity{" +
-                "patientId=" + patientId +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                ", age=" + age +
-                ", gender='" + gender + '\'' +
-                ", address='" + address + '\'' +
-                ", phoneNumber=" + phoneNumber +
-                ", email='" + email + '\'' +
-                ", marritalStatus='" + marritalStatus + '\'' +
-                ", prefferedLanguage='" + prefferedLanguage + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", dateModified=" + dateModified +
-                '}';
+    @PrePersist
+    public void autoFillUuid() {
+        this.setXId(UUID.randomUUID().toString());
     }
+
 }

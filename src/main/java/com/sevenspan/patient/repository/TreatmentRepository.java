@@ -7,11 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TreatmentRepository extends JpaRepository<TreatmentEntity,String> {
-
-//    @Modifying
-//    @Query("delete from treatment t where t.patient_id = ?1")
-//    void deleteTreatmentByPatientId(int patientId);
-
-    List<TreatmentEntity> findByPatientId(String patientId);
+public interface TreatmentRepository extends JpaRepository<TreatmentEntity,Long> {
+    List<TreatmentEntity> findByPatientId(Long patientId);
 }

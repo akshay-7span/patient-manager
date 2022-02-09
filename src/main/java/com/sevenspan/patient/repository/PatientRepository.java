@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 //Here PatientRepositoryCustom for criteria builder and criteria queries
-public interface PatientRepository extends JpaRepository<PatientEntity, String>, PatientRepositoryCustom {
+public interface PatientRepository extends JpaRepository<PatientEntity, Long>, PatientRepositoryCustom {
 
     //For query by method name with "And" condition
     List<PatientEntity> findByPhoneNumberAndEmail(Long phoneNumber,String email);

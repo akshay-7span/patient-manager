@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -47,6 +48,20 @@ public class PatientRepositoryCustomImpl implements PatientRepositoryCustom {
         cq.where(predicates.toArray(new Predicate[0]));
 
         return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<PatientEntity> findByEmailAddress(String email) {
+        Query query=entityManager.createNamedQuery("findByEmailAddress");
+        query.setParameter(1,email);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<PatientEntity> findByAgeLessThan(Integer age) {
+        Query query=entityManager.createNamedQuery("findByAge");
+        query.setParameter(1,age);
+        return query.getResultList();
     }
 
 }

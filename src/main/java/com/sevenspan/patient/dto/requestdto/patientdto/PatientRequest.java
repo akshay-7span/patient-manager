@@ -7,7 +7,7 @@ import java.sql.Date;
 @Data
 public class PatientRequest {
 
-    private String patientId;
+    private Long id;
     private Long doctorId;
     private String firstName;
     private String lastName;
@@ -21,5 +21,5 @@ public class PatientRequest {
     private String prefferedLanguage;
     private Date dateCreated;
     private Date dateModified;
-
+    private String xId;
 }

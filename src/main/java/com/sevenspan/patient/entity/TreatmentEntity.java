@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.sql.Date;
 import java.util.UUID;
 
@@ -17,18 +18,13 @@ import java.util.UUID;
 public class TreatmentEntity {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "treatment_id")
-    private String treatmentId;
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "treatment_id")
-//    private Long treatmentId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    @NotBlank(message = "Id should not be null")
+    private Long id;
 
     @Column(name = "patient_id")
-    private String patientId;
+    private Long patientId;
 
     @Column(name = "disease")
     private String disease;
@@ -51,18 +47,12 @@ public class TreatmentEntity {
     @Column(name = "resolve")
     private Boolean resolve;
 
-    @Override
-    public String toString() {
-        return "TreatmentEntity{" +
-                "treatmentId=" + treatmentId +
-                ", patientId=" + patientId +
-                ", disease='" + disease + '\'' +
-                ", symptoms='" + symptoms + '\'' +
-                ", duration='" + duration + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", medicine='" + medicine + '\'' +
-                ", resolve=" + resolve +
-                '}';
+    @Column(name = "x_id",unique = true, nullable = false,updatable = false)
+    private String xId;
+
+    @PrePersist
+    public void autoFillUuid() {
+        this.setXId(UUID.randomUUID().toString());
     }
+
 }

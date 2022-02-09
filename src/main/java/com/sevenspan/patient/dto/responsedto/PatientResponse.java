@@ -4,12 +4,13 @@ import lombok.Data;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientResponse {
 
-    private String patientId;
+    private Long id;
     private Long doctorId;
     private String firstName;
     private String lastName;
@@ -23,5 +24,6 @@ public class PatientResponse {
     private String prefferedLanguage;
     private Date dateCreated;
     private Date dateModified;
-    private List<TreatmentResponse> treatmentResponseDTO;
+    private String xId;
+    private List<TreatmentResponse> treatmentResponse;
 }

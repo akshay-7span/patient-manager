@@ -10,22 +10,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class DatabaseService implements HealthIndicator {
+public interface DatabaseService extends HealthIndicator {
 
-    @Autowired
-    JdbcTemplate template;
-    @Override
-    public Health health() {
-        int errorCode = check(); // perform some specific health check
-        if (errorCode != 1) {
-            return Health.down().withDetail("Error Code", 500).build();
-        }
-        return Health.up().build();
-    }
+    public Health health();
 
-    public int check(){
-        List<Object> results = template.query("select 1 from dual",
-                new SingleColumnRowMapper<>());
-        return results.size();
-    }
+    public int check();
 }
