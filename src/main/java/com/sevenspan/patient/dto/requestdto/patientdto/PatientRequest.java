@@ -22,4 +22,25 @@ public class PatientRequest {
     private Date dateCreated;
     private Date dateModified;
     private String xId;
+
+    @Override
+    public String toString() {
+        return "PatientRequest{" +
+                "id=" + id +
+                ", doctorId=" + doctorId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", age=" + age +
+                ", gender='" + gender + '\'' +
+                ", address='" + address + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", email='" + email + '\'' +
+                ", marritalStatus='" + marritalStatus + '\'' +
+                ", prefferedLanguage='" + prefferedLanguage + '\'' +
+                ", dateCreated=" + dateCreated +
+                ", dateModified=" + dateModified +
+                ", xId='" + xId + '\'' +
+                '}';
+    }
 }

@@ -38,8 +38,7 @@ spring:
   profiles:
     active: 'dev'
   flyway:
-    locations: classpath:db/migration/common
-    #,classpath:db/migration/dev
+    locations: classpath:db/migration/common,classpath:db/migration/dev
     enabled: 'false'
 
 #flyway:
