@@ -5,7 +5,9 @@ import com.sevenspan.patient.entity.PatientEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,7 +28,20 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, P
     //For check record availability with "And" condition
     Boolean existsByPhoneNumberAndEmail(Long phoneNumber,String email);
 
+    Boolean existsByxId(String xId);
+
     //For original query
     @Query("from patient p where p.email like %?1")
     List<PatientEntity> findByEmailEndWith(String emailEnd);
+
+    @Modifying
+    @Query("update patient set status = 'INACTIVATION_REQUESTED' where x_id = :xId")
+    void updateStatusRequestInactive(@Param("xId") String xId);
+
+    List<PatientEntity> findByStatusIs(String status);
+
+    @Modifying
+    @Query("update patient set status = 'INACTIVE' where x_id = :xId")
+    void updateStatusInactive(@Param("xId") String xId);
+
 }

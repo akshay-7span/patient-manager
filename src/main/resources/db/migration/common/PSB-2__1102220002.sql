@@ -5,7 +5,7 @@ CREATE TABLE `treatment` (
   `end_date` date DEFAULT NULL,
   `medicine` varchar(255) DEFAULT NULL,
   `patient_id` bigint DEFAULT NULL,
-  `resolve` bit(1) DEFAULT NULL,
+  `resolve` bit(1),
   `start_date` date DEFAULT NULL,
   `symptoms` varchar(255) DEFAULT NULL,
   `x_id` varchar(255) NOT NULL,

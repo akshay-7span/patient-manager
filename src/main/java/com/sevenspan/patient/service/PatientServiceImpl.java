@@ -4,6 +4,7 @@ import com.sevenspan.patient.dto.requestdto.patientdto.PatientFilterRequest;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
 import com.sevenspan.patient.dto.responsedto.PatientResponse;
 import com.sevenspan.patient.entity.PatientEntity;
+import com.sevenspan.patient.enums.UserStatus;
 import com.sevenspan.patient.exceptions.PMRecordExistsException;
 import com.sevenspan.patient.exceptions.PMRecordNotExistsException;
 import com.sevenspan.patient.mapper.Mapper;
@@ -18,11 +19,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
 @Service
+@Transactional
 public class PatientServiceImpl implements PatientService{
 
     private static final String EXCEPTIONMESSAGE="No any records available";
@@ -33,9 +36,10 @@ public class PatientServiceImpl implements PatientService{
     PatientRepository patientRepository;
 
     //Get all the data from patient table
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public List<PatientResponse> getAllPatients() {
-        log.info("Enter into PatientService.getAllPatients() method");
+
         List<PatientResponse> patientDTO = patientRepository
                 .findAll()
                 .stream()
@@ -50,10 +54,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //Get the data from patient table by id
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public PatientResponse getPatientById(Long patientId){
 
-        log.info("Enter into PatientService.getPatientById() method");
         if(patientRepository.existsById(patientId)) {
             return patientRepository
                     .findById(patientId)
@@ -65,12 +69,11 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //Get the data from patient table by doctorId
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public List<PatientResponse> getPatientByDoctorId(Long doctorId, Integer pageNumber, Integer pageSize, String sortBy){
 
         Pageable pageable = PageRequest.of(pageNumber,pageSize, Sort.by(sortBy));
-
-        log.info("Enter into PatientService.getPatientByDoctorId() method");
         Page<PatientEntity> patientEntityPage=patientRepository
                 .findByDoctorId(doctorId,pageable);
 
@@ -86,9 +89,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //Get the data from patient table by given filter
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public List<PatientResponse> getPatientByGivenFilter(PatientFilterRequest patientFilterDTO){
-        log.info("Enter into PatientService.getPatientById() method");
+
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findPatientWithGivenFilter(patientFilterDTO)
                 .stream()
@@ -102,10 +106,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //Get the data from patient table by phoneNumber and email
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public List<PatientResponse> getPatientByPhoneNumberAndEmail(Long phoneNumber, String email){
 
-        log.info("Enter into PatientService.getPatientByPhoneNumberAndEmail() method");
         if(patientRepository.existsByPhoneNumberAndEmail(phoneNumber,email)) {
             return patientRepository
                     .findByPhoneNumberAndEmail(phoneNumber,email)
@@ -118,10 +122,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //Get the data from patient table by email ends with
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public List<PatientResponse> getPatientByEmailEndsWith(String emailEnd){
 
-        log.info("Enter into PatientService.getPatientByEmailEndsWith() method");
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findByEmailEndWith(emailEnd)
                 .stream()
@@ -135,10 +139,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //Get the data from patient table by email address
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public List<PatientResponse> getPatientByEmailAddress(String email){
 
-        log.info("Enter into PatientService.getPatientByEmailAddress() method");
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findByEmailAddress(email)
                 .stream()
@@ -152,10 +156,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //Get the data from patient table by age
+    @Override
     @SneakyThrows(PMRecordNotExistsException.class)
     public List<PatientResponse> getPatientByAgeLessThan(Integer age){
 
-        log.info("Enter into PatientService.getPatientByAgeLessThan() method");
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findByAgeLessThan(age)
                 .stream()
@@ -169,10 +173,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //save data in patient table
+    @Override
     @SneakyThrows(PMRecordExistsException.class)
     public PatientResponse createPatient(PatientRequest patientRequestDTO) {
 
-        log.info("Enter into PatientService.createPatient() method");
         if(!patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
             return mapper.getPatientResponse(
                     patientRepository
@@ -183,10 +187,10 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //update data in patient table
+    @Override
     @SneakyThrows()
     public PatientResponse updatePatient(PatientRequest patientRequestDTO){
 
-        log.info("Enter into PatientService.updatePatient() method");
         if(patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
             return mapper.getPatientResponse(
                     patientRepository
@@ -197,34 +201,38 @@ public class PatientServiceImpl implements PatientService{
     }
 
     //delete data from patient table
+    @Override
     public void deletePatient(Long patientId) {
 
-        log.info("Enter into PatientService.deletePatient() method");
         patientRepository.deleteById(patientId);
     }
 
-    //Transfer data from DTO to Entity
-//    private PatientEntity convertPatientRequestDTOtoPatientEntity(PatientRequest patientRequestDTO){
-//
-//        //This will transfer all the fields values of one data class to another data class
-//        return Mapper.convert(patientRequestDTO,PatientEntity.class);
-//    }
-//
-//    private PatientResponse convertPatientEntitytoPatientResponseDTO(PatientEntity patientEntity){
-//
-//        return Mapper.convert(patientEntity, PatientResponse.class);
-//    }
-//
-//    private PatientResponse convertPatientEntityToDTOWithTreatment(PatientEntity patientEntity){
-//        List<TreatmentResponse> treatmentResponseDTOS= Mapper
-//                .mapAll(patientEntity.getTreatmentEntity(), TreatmentResponse.class);
-//        PropertyMap<PatientEntity, PatientResponse> propertyMap = new PropertyMap <PatientEntity, PatientResponse>() {
-//            protected void configure() {
-//                map().setTreatmentResponse(
-//                        treatmentResponseDTOS
-//                );
-//            }
-//        };
-//        return Mapper.convertWithCondition(patientEntity, PatientResponse.class,propertyMap);
-//    }
+    //Update patient status
+    @Override
+    @SneakyThrows
+    public void updateStatusRequestInactive(String xId) {
+
+        if(patientRepository.existsByxId(xId)){
+            patientRepository.updateStatusRequestInactive(xId);
+        }
+        else{
+            throw new PMRecordNotExistsException("Patient not exists to update");
+        }
+
+    }
+
+    @Override
+    public String updateStatusInactive() {
+
+        List<PatientEntity> patientEntityList = patientRepository.findByStatusIs(UserStatus.INACTIVATION_REQUESTED.name());
+        if(!patientEntityList.isEmpty()){
+            patientEntityList.forEach(patientEntity -> patientEntity.setStatus(UserStatus.INACTIVE.name()));
+            patientRepository.saveAll(patientEntityList);
+            return "Statuses are updated";
+        }else{
+            return "Statuses are UpToDate";
+        }
+    }
+
+
 }

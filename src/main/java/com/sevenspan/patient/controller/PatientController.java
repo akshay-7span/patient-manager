@@ -21,15 +21,11 @@ public class PatientController {
 
     @GetMapping(value = "/")
     public SuccessMessage<List<PatientResponse>> getAllPatients() {
-
-        log.info("Enter into PatientController.getPatient() method");
         return new SuccessMessage<>(patientService.getAllPatients());
     }
 
     @GetMapping(value = "/{id}")
     public SuccessMessage<PatientResponse> getPatientById(@PathVariable("id") Long id) {
-
-        log.info("Enter into PatientController.getPatientById() method");
         return new SuccessMessage<>(patientService.getPatientById(id));
     }
 
@@ -38,13 +34,11 @@ public class PatientController {
             @RequestParam("phoneNumber") Long phoneNumber
             ,@RequestParam("email") String email
     ) {
-        log.info("Enter into PatientController.getPatientByPhoneNumberAndEmail() method");
         return new SuccessMessage<>(patientService.getPatientByPhoneNumberAndEmail(phoneNumber, email));
     }
 
     @GetMapping(value = "/filter-email-end")
     public SuccessMessage<List<PatientResponse>> getPatientByEmailEndsWith(@RequestParam("emailEnd") String emailEnd) {
-        log.info("Enter into PatientController.getPatientByEmailEndsWith() method");
         return new SuccessMessage<>(patientService.getPatientByEmailEndsWith(emailEnd));
     }
 
@@ -55,46 +49,43 @@ public class PatientController {
             ,@RequestParam("pageSize") Integer pageSize
             ,@RequestParam("sortBy") String sortBy
     ){
-
-        log.info("Enter into PatientController.getPatientByDoctorId() method");
         return new SuccessMessage<>(patientService.getPatientByDoctorId(id,pageNumber,pageSize,sortBy));
     }
 
     @GetMapping(value = "/filter/")
     public SuccessMessage<List<PatientResponse>> getPatientByGivenFilter(@RequestBody PatientFilterRequest patientFilterDTO) {
-
-        log.info("Enter into PatientController.getPatient() method");
         return new SuccessMessage<>(patientService.getPatientByGivenFilter(patientFilterDTO));
     }
 
     @GetMapping(value = "/filter-email")
     public SuccessMessage<List<PatientResponse>> getPatientByEmailAddress(@RequestParam("email") String email) {
-        log.info("Enter into PatientController.getPatientByEmailAddress() method");
         return new SuccessMessage<>(patientService.getPatientByEmailAddress(email));
     }
 
     @GetMapping(value = "/filter-age")
     public SuccessMessage<List<PatientResponse>> getPatientByAgeLessThan(@RequestParam("age") Integer age) {
-        log.info("Enter into PatientController.getPatientByAge() method");
         return new SuccessMessage<>(patientService.getPatientByAgeLessThan(age));
     }
 
     @PostMapping(value = "/")
     public SuccessMessage<PatientResponse> createPatient(@RequestBody PatientRequest patientRequestDTO) {
-        log.info("Enter into PatientController.createPatient() method");
         return new SuccessMessage<>(patientService.createPatient(patientRequestDTO));
     }
 
     @PutMapping(value = "/")
     public SuccessMessage<PatientResponse> updatePatient(@RequestBody PatientRequest patientRequestDTO) {
-        log.info("Enter into PatientController.updatePatient() method");
         return new SuccessMessage<>(patientService.updatePatient(patientRequestDTO));
     }
 
     @DeleteMapping(value = "/{id}")
     public SuccessMessage<String> deletePatient(@PathVariable("id") Long id) {
-        log.info("Enter into PatientController.deletePatient() method");
         patientService.deletePatient(id);
-        return new SuccessMessage("Data deleted successfully");
+        return new SuccessMessage<>("Data deleted successfully");
+    }
+
+    @PutMapping(value = "/request-account-inactivation")
+    public SuccessMessage<String> updateStatus(@RequestParam("xId") String xId){
+        patientService.updateStatusRequestInactive(xId);
+        return new SuccessMessage<>("Status updated successfully");
     }
 }

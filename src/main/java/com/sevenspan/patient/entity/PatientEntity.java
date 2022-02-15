@@ -1,15 +1,17 @@
 package com.sevenspan.patient.entity;
 
+import com.sevenspan.patient.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +48,7 @@ public class PatientEntity {
     @Column(name = "age")
     private Integer age;
 
+    //Male, Female, Transgender
     @Column(name = "gender")
     private String gender;
 
@@ -61,12 +64,24 @@ public class PatientEntity {
     @Column(name = "email")
     private String email;
 
+    //Single, Married
     @Column(name = "marital_status")
     private String marritalStatus;
 
+    //Vocal language
     @Column(name = "preffered_language")
     private String prefferedLanguage;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted=false;
+
+    //ACTIVE
+    //INACTIVE
+    //INACTIVATION_REQUESTED
+    @Column(name = "status")
+    private String status= UserStatus.ACTIVE.name();
+
+    //Date.valueOf(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-mm-dd")));
     @Column(name = "date_created")
     private Date dateCreated;
 

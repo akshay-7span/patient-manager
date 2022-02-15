@@ -31,4 +31,9 @@ public interface PatientService {
 
     public void deletePatient(Long patientId);
 
+    public void updateStatusRequestInactive(String xid);
+
+    public String updateStatusInactive();
+
+
 }

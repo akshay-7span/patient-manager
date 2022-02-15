@@ -1,7 +1,7 @@
 package com.sevenspan.patient.configuration;
 
-import org.flywaydb.core.Flyway;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
@@ -15,8 +15,10 @@ import org.springframework.stereotype.Component;
 public class FlywayConfiguration {
 
     @Bean
-    public void migration() {
-        Flyway flyway = Flyway.configure().dataSource("jdbc:mysql://localhost:3306/patient", "root", "root").locations("db.migration.common").load();
-        flyway.migrate();
+    public FlywayMigrationStrategy cleanMigrateStrategy() {
+        return flyway -> {
+            flyway.repair();
+            flyway.migrate();
+        };
     }
 }

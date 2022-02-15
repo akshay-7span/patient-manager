@@ -82,18 +82,4 @@ public class TreatmentServiceImpl implements TreatmentService{
             throw new PMRecordNotExistsException("No any records available to update");
         }
     }
-
-    //Transfer data from Entity to DTO
-//    private TreatmentRequest convertTreatmentEntitytoTreatmentDTO(TreatmentEntity treatmentEntity){
-//
-//        //This will transfer all the fields values of one data class to another data class
-//        return Mapper.convert(treatmentEntity, TreatmentRequest.class);
-//    }
-//
-//    //Transfer data from DTO to Entity
-//    private TreatmentEntity convertTreatmentDTOtoTreatmentEntity(TreatmentRequest treatmentDTO){
-//
-//        //This will transfer all the fields values of one data class to another data class
-//        return Mapper.convert(treatmentDTO,TreatmentEntity.class);
-//    }
 }

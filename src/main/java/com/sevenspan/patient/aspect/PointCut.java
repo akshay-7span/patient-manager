@@ -9,4 +9,7 @@ public class PointCut {
 
     @Pointcut("execution(* com.sevenspan.patient.service..*.*(..))")
     public void servicePointCut(){}
+
+    @Pointcut("execution(* com.sevenspan.patient.scheduler..*.*(..))")
+    public void schedulerPointCut(){}
 }

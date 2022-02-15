@@ -20,25 +20,21 @@ public class TreatmentController {
 
     @GetMapping(value = "/")
     public SuccessMessage<List<TreatmentResponse>> getAllTreatment() {
-        log.info("Enter into TreatmentController.getTreatment() method");
         return new SuccessMessage<>(treatmentService.getAllTreatment());
     }
 
     @GetMapping(value = "/{id}")
     public SuccessMessage<List<TreatmentResponse>> getTreatmentsByPatientId(@PathVariable("id") Long id) {
-        log.info("Enter into TreatmentController.getTreatmentsByPatientId() method");
         return new SuccessMessage<>(treatmentService.getTreatmentByPatientId(id));
     }
 
     @PostMapping(value = "/")
     public SuccessMessage<TreatmentResponse> createTreatment(@RequestBody TreatmentRequest treatmentDTO) {
-        log.info("Enter into TreatmentController.createTreatment() method");
         return new SuccessMessage<>(treatmentService.createTreatment(treatmentDTO));
     }
 
     @PutMapping(value = "/")
     public SuccessMessage<TreatmentResponse> updateTreatment(@RequestBody TreatmentRequest treatmentDTO) {
-        log.info("Enter into TreatmentController.updateTreatment() method");
         return new SuccessMessage<>(treatmentService.updatetreatment(treatmentDTO));
     }
 }

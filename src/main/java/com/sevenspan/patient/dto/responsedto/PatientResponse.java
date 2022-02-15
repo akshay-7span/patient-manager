@@ -2,6 +2,7 @@ package com.sevenspan.patient.dto.responsedto;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
@@ -25,5 +26,7 @@ public class PatientResponse {
     private Date dateCreated;
     private Date dateModified;
     private String xId;
+    private Boolean isDeleted;
+    private String status;
     private List<TreatmentResponse> treatmentResponse;
 }

@@ -45,7 +45,7 @@ public class TreatmentEntity {
     private String medicine;
 
     @Column(name = "resolve")
-    private Boolean resolve;
+    private Boolean resolve=false;
 
     @Column(name = "x_id",unique = true, nullable = false,updatable = false)
     private String xId;

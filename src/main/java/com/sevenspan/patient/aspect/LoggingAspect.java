@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 @Log4j2
 public class LoggingAspect {
 
-    @Before("com.sevenspan.patient.aspect.PointCut.controllerPointCut() || com.sevenspan.patient.aspect.PointCut.servicePointCut()")
+    @Before("com.sevenspan.patient.aspect.PointCut.controllerPointCut() " +
+            "|| com.sevenspan.patient.aspect.PointCut.servicePointCut() " +
+            "|| com.sevenspan.patient.aspect.PointCut.schedulerPointCut()")
     public void beforeMethod(JoinPoint joinPoint) {
 
         //Displaying class name and method name
@@ -26,7 +28,9 @@ public class LoggingAspect {
         }
     }
 
-    @After("com.sevenspan.patient.aspect.PointCut.controllerPointCut() || com.sevenspan.patient.aspect.PointCut.servicePointCut()")
+    @After("com.sevenspan.patient.aspect.PointCut.controllerPointCut() " +
+            "|| com.sevenspan.patient.aspect.PointCut.servicePointCut() " +
+            "|| com.sevenspan.patient.aspect.PointCut.schedulerPointCut()")
     public void afterMethod(JoinPoint joinPoint) {
 
         //Displaying class name and method name
@@ -39,7 +43,7 @@ public class LoggingAspect {
 
         //Displaying class name and method name
         //Before Method Execution
-        log.info(proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + proceedingJoinPoint.getSignature().getName() + " -- START");
+        //log.info(proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + proceedingJoinPoint.getSignature().getName() + " -- START");
 
         //Displaying Method Argument
         Object[] objects = proceedingJoinPoint.getArgs();
@@ -48,16 +52,12 @@ public class LoggingAspect {
             log.info(ob.toString());
         }
 
-        //Displaying class name and method name
-        //Execution of Method
-        //Get response in object
-        Object object = proceedingJoinPoint.proceed();
-
         //After Method Execution
-        log.info(proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + proceedingJoinPoint.getSignature().getName() + " -- END");
+        //log.info(proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + proceedingJoinPoint.getSignature().getName() + " -- END");
 
+        //Get response in object
         //Return response of method
-        return object;
+        return proceedingJoinPoint.proceed();
     }
 
     @AfterReturning(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", returning = "object")
