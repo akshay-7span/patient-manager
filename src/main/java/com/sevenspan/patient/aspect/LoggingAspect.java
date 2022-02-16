@@ -1,6 +1,6 @@
 package com.sevenspan.patient.aspect;
 
-import com.sevenspan.patient.dto.responsedto.SuccessMessage;
+import com.sevenspan.patient.dto.responsedto.SuccessResponse;
 import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -62,7 +62,7 @@ public class LoggingAspect {
 
     @AfterReturning(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", returning = "object")
     public void afterReturningMethod(Object object) {
-        SuccessMessage<Object> successMessage = new SuccessMessage<>(object);
+        SuccessResponse<Object> successMessage = new SuccessResponse<>(object);
         log.info(successMessage.getMessage());
         log.info(successMessage.getStatus());
         log.info(successMessage.getData());

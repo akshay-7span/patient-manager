@@ -1,6 +1,6 @@
 package com.sevenspan.patient.util;
 
-import com.sevenspan.patient.dto.responsedto.ErrorMessage;
+import com.sevenspan.patient.dto.responsedto.ErrorResponse;
 import com.sevenspan.patient.enums.MessageStatus;
 import com.sevenspan.patient.exceptions.PMRecordExistsException;
 import com.sevenspan.patient.exceptions.PMRecordNotExistsException;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorUtil {
 
     @ExceptionHandler
-    public ErrorMessage errorResponse(Exception exception){
+    public ErrorResponse errorResponse(Exception exception){
         log.info("Default exception entry.......................");
-        ErrorMessage messageDTO=new ErrorMessage(
+        ErrorResponse messageDTO=new ErrorResponse(
                 MessageStatus.FAILURE,
                 exception.getMessage(),
                 exception.getStackTrace());
@@ -25,9 +25,9 @@ public class ErrorUtil {
     }
 
     @ExceptionHandler(value = {PMRecordExistsException.class})
-    public ErrorMessage errorResponse(PMRecordExistsException recordExistsException){
+    public ErrorResponse errorResponse(PMRecordExistsException recordExistsException){
         log.info("Custom exception entry.......................");
-        ErrorMessage messageDTO=new ErrorMessage(
+        ErrorResponse messageDTO=new ErrorResponse(
                 MessageStatus.FAILURE,
                 recordExistsException.getMessage(),
                 recordExistsException.getStackTrace());
@@ -36,9 +36,9 @@ public class ErrorUtil {
     }
 
     @ExceptionHandler(value = {PMRecordNotExistsException.class})
-    public ErrorMessage errorResponse(PMRecordNotExistsException recordNotExistsException){
+    public ErrorResponse errorResponse(PMRecordNotExistsException recordNotExistsException){
         log.info("Custom exception entry.......................");
-        ErrorMessage messageDTO=new ErrorMessage(
+        ErrorResponse messageDTO=new ErrorResponse(
                 MessageStatus.FAILURE,
                 recordNotExistsException.getMessage(),
                 recordNotExistsException.getStackTrace());
