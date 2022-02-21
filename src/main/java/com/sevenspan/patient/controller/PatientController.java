@@ -1,11 +1,10 @@
 package com.sevenspan.patient.controller;
 
-import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientFilterRequest;
+import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
 import com.sevenspan.patient.dto.responsedto.PatientResponse;
-import com.sevenspan.patient.entity.PatientEntity;
-import com.sevenspan.patient.entity.TreatmentEntity;
-import com.sevenspan.patient.repository.PatientRepository;
+import com.sevenspan.patient.exceptions.PMRecordExistsException;
+import com.sevenspan.patient.exceptions.PMRecordNotExistsException;
 import com.sevenspan.patient.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +19,13 @@ public class PatientController {
     PatientService patientService;
 
     @GetMapping(value = "/")
-    public List<PatientResponse> getAllPatients() {
+    public List<PatientResponse> getAllPatients() throws PMRecordNotExistsException {
         return patientService.getAllPatients();
     }
 
     @GetMapping(value = "/{id}")
-    public PatientResponse getPatientById(@PathVariable("id") String id) {
+    public PatientResponse getPatientById(@PathVariable("id") String id) throws PMRecordNotExistsException {
 //        List<TreatmentEntity> treatmentEntities=patientRepository.findByXid(id).getTreatmentEntity();
-
 //        return treatmentEntities;
         return patientService.getPatientById(id);
     }
@@ -35,48 +33,48 @@ public class PatientController {
     @GetMapping(value = "/filter-phone-email")
     public List<PatientResponse> getPatientByPhoneNumberAndEmail(
             @RequestParam("phoneNumber") Long phoneNumber
-            ,@RequestParam("email") String email
-    ) {
+            , @RequestParam("email") String email
+    ) throws PMRecordNotExistsException {
         return patientService.getPatientByPhoneNumberAndEmail(phoneNumber, email);
     }
 
     @GetMapping(value = "/filter-email-end")
-    public List<PatientResponse> getPatientByEmailEndsWith(@RequestParam("emailEnd") String emailEnd) {
+    public List<PatientResponse> getPatientByEmailEndsWith(@RequestParam("emailEnd") String emailEnd) throws PMRecordNotExistsException {
         return patientService.getPatientByEmailEndsWith(emailEnd);
     }
 
-    @GetMapping(value="/expose")
+    @GetMapping(value = "/expose")
     public List<PatientResponse> getPatientByDoctorXid(
             @RequestParam("doctorXid") String doctorXid
-            ,@RequestParam("pageNumber") Integer pageNumber
-            ,@RequestParam("pageSize") Integer pageSize
-            ,@RequestParam("sortBy") String sortBy
-    ){
-        return patientService.getPatientByDoctorXid(doctorXid,pageNumber,pageSize,sortBy);
+            , @RequestParam("pageNumber") Integer pageNumber
+            , @RequestParam("pageSize") Integer pageSize
+            , @RequestParam("sortBy") String sortBy
+    ) throws PMRecordNotExistsException {
+        return patientService.getPatientByDoctorXid(doctorXid, pageNumber, pageSize, sortBy);
     }
 
     @GetMapping(value = "/filter/")
-    public List<PatientResponse> getPatientByGivenFilter(@RequestBody PatientFilterRequest patientFilterDTO) {
+    public List<PatientResponse> getPatientByGivenFilter(@RequestBody PatientFilterRequest patientFilterDTO) throws PMRecordNotExistsException {
         return patientService.getPatientByGivenFilter(patientFilterDTO);
     }
 
     @GetMapping(value = "/filter-email")
-    public List<PatientResponse> getPatientByEmailAddress(@RequestParam("email") String email) {
+    public List<PatientResponse> getPatientByEmailAddress(@RequestParam("email") String email) throws PMRecordNotExistsException {
         return patientService.getPatientByEmailAddress(email);
     }
 
     @GetMapping(value = "/filter-age")
-    public List<PatientResponse> getPatientByAgeLessThan(@RequestParam("age") Integer age) {
+    public List<PatientResponse> getPatientByAgeLessThan(@RequestParam("age") Integer age) throws PMRecordNotExistsException {
         return patientService.getPatientByAgeLessThan(age);
     }
 
     @PostMapping(value = "/")
-    public PatientResponse createPatient(@RequestBody PatientRequest patientRequestDTO) {
+    public PatientResponse createPatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordExistsException {
         return patientService.createPatient(patientRequestDTO);
     }
 
     @PutMapping(value = "/")
-    public PatientResponse updatePatient(@RequestBody PatientRequest patientRequestDTO) {
+    public PatientResponse updatePatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordNotExistsException {
         return patientService.updatePatient(patientRequestDTO);
     }
 
@@ -87,7 +85,7 @@ public class PatientController {
     }
 
     @PutMapping(value = "/request-account-inactivation")
-    public String updateStatus(@RequestParam("xId") String xId){
+    public String updateStatus(@RequestParam("xId") String xId) throws PMRecordNotExistsException {
         patientService.updateStatusRequestInactive(xId);
         return "Status updated successfully";
     }

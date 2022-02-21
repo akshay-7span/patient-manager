@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Log4j2
 public class ErrorUtil {
 
-    @ExceptionHandler
+    @ExceptionHandler(value = {Exception.class})
     public ErrorResponse errorResponse(Exception exception){
         log.info("Default exception entry.......................");
         ErrorResponse messageDTO=new ErrorResponse(
@@ -20,7 +20,7 @@ public class ErrorUtil {
                 exception.getMessage(),
                 exception.getStackTrace());
 
-        exception.printStackTrace();
+        //exception.printStackTrace();
         return messageDTO;
     }
 
