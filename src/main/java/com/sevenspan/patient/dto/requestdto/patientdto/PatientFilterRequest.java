@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class PatientFilterRequest {
 
-    private Long doctorId;
+    private String doctorXid;
     private String firstName;
     private Integer age;
     private String gender;

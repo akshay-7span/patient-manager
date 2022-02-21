@@ -1,6 +1,5 @@
 package com.sevenspan.patient.aspect;
 
-import com.sevenspan.patient.dto.responsedto.SuccessResponse;
 import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -41,19 +40,12 @@ public class LoggingAspect {
     @Around("com.sevenspan.patient.aspect.PointCut.controllerPointCut()")
     public Object aroundMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
-        //Displaying class name and method name
-        //Before Method Execution
-        //log.info(proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + proceedingJoinPoint.getSignature().getName() + " -- START");
-
         //Displaying Method Argument
         Object[] objects = proceedingJoinPoint.getArgs();
         log.info("Method Arguments: ");
         for (Object ob : objects) {
             log.info(ob.toString());
         }
-
-        //After Method Execution
-        //log.info(proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + proceedingJoinPoint.getSignature().getName() + " -- END");
 
         //Get response in object
         //Return response of method
@@ -62,15 +54,12 @@ public class LoggingAspect {
 
     @AfterReturning(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", returning = "object")
     public void afterReturningMethod(Object object) {
-        SuccessResponse<Object> successMessage = new SuccessResponse<>(object);
-        log.info(successMessage.getMessage());
-        log.info(successMessage.getStatus());
-        log.info(successMessage.getData());
+        log.info(object);
     }
 
-    @AfterThrowing(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", throwing = "ex")
-    public void afterThrowingMethod(JoinPoint joinPoint, Exception ex) {
-        log.info(joinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + joinPoint.getSignature().getName() + " -- EXCEPTION");
-        log.error(ex.getMessage());
-    }
+//    @AfterThrowing(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", throwing = "ex")
+//    public void afterThrowingMethod(JoinPoint joinPoint, Exception ex) {
+//        log.info(joinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + joinPoint.getSignature().getName() + " -- EXCEPTION");
+//        log.error(ex.getMessage());
+//    }
 }

@@ -8,8 +8,6 @@ import java.sql.Date;
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TreatmentResponse {
 
-    private Long id;
-    private Long patientId;
     private String disease;
     private String symptoms;
     private String duration;

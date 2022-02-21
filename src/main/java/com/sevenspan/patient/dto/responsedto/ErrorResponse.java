@@ -1,5 +1,7 @@
 package com.sevenspan.patient.dto.responsedto;
 
+import com.sevenspan.patient.enums.MessageStatus;
+import com.sevenspan.patient.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ErrorResponse<T> {
 
-    private Enum status;
+    private String status;
     private String message;
     private T data;
 
-    public ErrorResponse(Enum status, String message) {
+    public ErrorResponse(String status, String message) {
         this.status = status;
         this.message = message;
     }

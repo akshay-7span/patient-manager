@@ -4,15 +4,18 @@ import com.sevenspan.patient.dto.requestdto.patientdto.PatientFilterRequest;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
 import com.sevenspan.patient.dto.responsedto.PatientResponse;
 import com.sevenspan.patient.entity.PatientEntity;
+import com.sevenspan.patient.entity.TreatmentEntity;
 import com.sevenspan.patient.enums.UserStatus;
 import com.sevenspan.patient.exceptions.PMRecordExistsException;
 import com.sevenspan.patient.exceptions.PMRecordNotExistsException;
+import com.sevenspan.patient.exceptions.PMSchedulerJobFailed;
 import com.sevenspan.patient.mapper.Mapper;
 import com.sevenspan.patient.repository.PatientRepository;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,14 +29,19 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 @Transactional
-public class PatientServiceImpl implements PatientService{
+public class PatientServiceImpl implements PatientService {
 
-    private static final String EXCEPTIONMESSAGE="No any records available";
-
-    private Mapper mapper= Mappers.getMapper(Mapper.class);
+    private Mapper mapper = Mappers.getMapper(Mapper.class);
 
     @Autowired
     PatientRepository patientRepository;
+
+    @Autowired
+    MessageSource messageSource;
+
+//    private final String RECORDEXISTS = messageSource.getMessage("record.exists", null, null);
+//    private final String RECORDNOTFOUND = messageSource.getMessage("record.notfound", null, null);
+//    private final String SCHEDULERFAIL = messageSource.getMessage("scheduler.patient.status.inactive", null, null);
 
     //Get all the data from patient table
     @Override
@@ -43,132 +51,141 @@ public class PatientServiceImpl implements PatientService{
         List<PatientResponse> patientDTO = patientRepository
                 .findAll()
                 .stream()
-                .map(mapper::getPatientResponse)
+                .map(mapper::mapPatientEntityToPatientResponse)
                 .collect(Collectors.toList());
 
-        if(!patientDTO.isEmpty()) {
+        if (!patientDTO.isEmpty()) {
             return patientDTO;
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
     //Get the data from patient table by id
     @Override
     @SneakyThrows(PMRecordNotExistsException.class)
-    public PatientResponse getPatientById(Long patientId){
+    public PatientResponse getPatientById(String xid) {
 
-        if(patientRepository.existsById(patientId)) {
-            return patientRepository
-                    .findById(patientId)
-                    .map(mapper::getPatientResponse)
-                    .get();
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        if (patientRepository.existsByXid(xid)) {
+
+            List<TreatmentEntity> treatmentEntity=patientRepository.findByXid(xid).getTreatmentEntity();
+            log.info(treatmentEntity.size());
+
+            return mapper.mapPatientEntityToPatientResponse(
+                    patientRepository.findByPatientXidLazy(xid));
+
+//            return patientRepository.findByXid(xid);
+
+//            return mapper.mapPatientEntityToPatientResponse(
+//                    patientRepository.findByXid(xid));
+
+
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
-    //Get the data from patient table by doctorId
+    //Get the data from patient table by doctorXid
     @Override
     @SneakyThrows(PMRecordNotExistsException.class)
-    public List<PatientResponse> getPatientByDoctorId(Long doctorId, Integer pageNumber, Integer pageSize, String sortBy){
+    public List<PatientResponse> getPatientByDoctorXid(String doctorXid, Integer pageNumber, Integer pageSize, String sortBy) {
 
-        Pageable pageable = PageRequest.of(pageNumber,pageSize, Sort.by(sortBy));
-        Page<PatientEntity> patientEntityPage=patientRepository
-                .findByDoctorId(doctorId,pageable);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        Page<PatientEntity> patientEntityPage = patientRepository
+                .findByDoctorXid(doctorXid, pageable);
 
-        if(patientEntityPage.hasContent()) {
+        if (patientEntityPage.hasContent()) {
             return patientEntityPage
                     .getContent()
                     .stream()
-                    .map(mapper::getPatientResponse)
+                    .map(mapper::mapPatientEntityToPatientResponse)
                     .collect(Collectors.toList());
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
     //Get the data from patient table by given filter
     @Override
     @SneakyThrows(PMRecordNotExistsException.class)
-    public List<PatientResponse> getPatientByGivenFilter(PatientFilterRequest patientFilterDTO){
+    public List<PatientResponse> getPatientByGivenFilter(PatientFilterRequest patientFilterDTO) {
 
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findPatientWithGivenFilter(patientFilterDTO)
                 .stream()
-                .map(mapper::getPatientResponse)
+                .map(mapper::mapPatientEntityToPatientResponse)
                 .collect(Collectors.toList());
-        if(!patientResponseDTO.isEmpty()){
+        if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
     //Get the data from patient table by phoneNumber and email
     @Override
     @SneakyThrows(PMRecordNotExistsException.class)
-    public List<PatientResponse> getPatientByPhoneNumberAndEmail(Long phoneNumber, String email){
+    public List<PatientResponse> getPatientByPhoneNumberAndEmail(Long phoneNumber, String email) {
 
-        if(patientRepository.existsByPhoneNumberAndEmail(phoneNumber,email)) {
+        if (patientRepository.existsByPhoneNumberAndEmail(phoneNumber, email)) {
             return patientRepository
-                    .findByPhoneNumberAndEmail(phoneNumber,email)
+                    .findByPhoneNumberAndEmail(phoneNumber, email)
                     .stream()
-                    .map(mapper::getPatientResponse)
+                    .map(mapper::mapPatientEntityToPatientResponse)
                     .collect(Collectors.toList());
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
     //Get the data from patient table by email ends with
     @Override
     @SneakyThrows(PMRecordNotExistsException.class)
-    public List<PatientResponse> getPatientByEmailEndsWith(String emailEnd){
+    public List<PatientResponse> getPatientByEmailEndsWith(String emailEnd) {
 
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findByEmailEndWith(emailEnd)
                 .stream()
-                .map(mapper::getPatientResponse)
+                .map(mapper::mapPatientEntityToPatientResponse)
                 .collect(Collectors.toList());
-        if(!patientResponseDTO.isEmpty()){
+        if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
     //Get the data from patient table by email address
     @Override
     @SneakyThrows(PMRecordNotExistsException.class)
-    public List<PatientResponse> getPatientByEmailAddress(String email){
+    public List<PatientResponse> getPatientByEmailAddress(String email) {
 
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findByEmailAddress(email)
                 .stream()
-                .map(mapper::getPatientResponse)
+                .map(mapper::mapPatientEntityToPatientResponse)
                 .collect(Collectors.toList());
-        if(!patientResponseDTO.isEmpty()){
+        if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
     //Get the data from patient table by age
     @Override
     @SneakyThrows(PMRecordNotExistsException.class)
-    public List<PatientResponse> getPatientByAgeLessThan(Integer age){
+    public List<PatientResponse> getPatientByAgeLessThan(Integer age) {
 
         List<PatientResponse> patientResponseDTO = patientRepository
                 .findByAgeLessThan(age)
                 .stream()
-                .map(mapper::getPatientResponse)
+                .map(mapper::mapPatientEntityToPatientResponse)
                 .collect(Collectors.toList());
-        if(!patientResponseDTO.isEmpty()){
+        if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
-        }else{
-            throw new PMRecordNotExistsException(EXCEPTIONMESSAGE);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
@@ -177,62 +194,63 @@ public class PatientServiceImpl implements PatientService{
     @SneakyThrows(PMRecordExistsException.class)
     public PatientResponse createPatient(PatientRequest patientRequestDTO) {
 
-        if(!patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
-            return mapper.getPatientResponse(
+        if (!patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
+            return mapper.mapPatientEntityToPatientResponse(
                     patientRepository
-                            .save(mapper.getPatientEntity(patientRequestDTO)));
-        }else{
-            throw new PMRecordExistsException("Patient already exists");
+                            .save(mapper.mapPatientRequestToPatientEntity(patientRequestDTO)));
+        } else {
+            throw new PMRecordExistsException("RECORDEXISTS");
         }
     }
 
     //update data in patient table
     @Override
-    @SneakyThrows()
-    public PatientResponse updatePatient(PatientRequest patientRequestDTO){
+    @SneakyThrows(PMRecordNotExistsException.class)
+    public PatientResponse updatePatient(PatientRequest patientRequestDTO) {
 
-        if(patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
-            return mapper.getPatientResponse(
+        if (patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
+            return mapper.mapPatientEntityToPatientResponse(
                     patientRepository
-                            .save(mapper.getPatientEntity(patientRequestDTO)));
-        }else{
-            throw new PMRecordNotExistsException("Patient not exists to update");
+                            .save(mapper.mapPatientRequestToPatientEntity(patientRequestDTO)));
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
     }
 
     //delete data from patient table
     @Override
-    public void deletePatient(Long patientId) {
+    public void deletePatient(String xid) {
 
-        patientRepository.deleteById(patientId);
+        patientRepository.updateStatusIsdeleted(xid);
     }
 
     //Update patient status
     @Override
-    @SneakyThrows
-    public void updateStatusRequestInactive(String xId) {
+    @SneakyThrows(PMRecordNotExistsException.class)
+    public void updateStatusRequestInactive(String xid) {
 
-        if(patientRepository.existsByxId(xId)){
-            patientRepository.updateStatusRequestInactive(xId);
-        }
-        else{
-            throw new PMRecordNotExistsException("Patient not exists to update");
+        if (patientRepository.existsByXid(xid)) {
+            patientRepository.updateStatusRequestInactive(xid);
+        } else {
+            throw new PMRecordNotExistsException("RECORDNOTFOUND");
         }
 
     }
 
+    //Schedule job to update status to of patient inactive
     @Override
-    public String updateStatusInactive() {
+    @SneakyThrows(PMSchedulerJobFailed.class)
+    public void updateStatusInactive() {
 
-        List<PatientEntity> patientEntityList = patientRepository.findByStatusIs(UserStatus.INACTIVATION_REQUESTED.name());
-        if(!patientEntityList.isEmpty()){
-            patientEntityList.forEach(patientEntity -> patientEntity.setStatus(UserStatus.INACTIVE.name()));
-            patientRepository.saveAll(patientEntityList);
-            return "Statuses are updated";
-        }else{
-            return "Statuses are UpToDate";
+        try {
+            List<PatientEntity> patientEntityList = patientRepository.findByStatusIs(UserStatus.INACTIVATION_REQUESTED.name());
+            if (!patientEntityList.isEmpty()) {
+                patientEntityList.forEach(patientEntity -> patientEntity.setStatus(UserStatus.INACTIVE));
+                patientRepository.saveAll(patientEntityList);
+            }
+        } catch (Exception e) {
+            throw new PMSchedulerJobFailed("SCHEDULERFAIL");
         }
     }
-
 
 }

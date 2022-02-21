@@ -32,7 +32,7 @@ public class TreatmentServiceImpl implements TreatmentService{
         List<TreatmentResponse> treatmentDTO=treatmentRepository
                 .findAll()
                 .stream()
-                .map(mapper::getTreatmentResponse)
+                .map(mapper::mapTreatmentEntityToTreatmentResponse)
                 .collect(Collectors.toList());
         if(!treatmentDTO.isEmpty()) {
             return treatmentDTO;
@@ -47,7 +47,7 @@ public class TreatmentServiceImpl implements TreatmentService{
         List<TreatmentResponse> treatmentDTO=treatmentRepository
                 .findByPatientId(patientId)
                 .stream()
-                .map(mapper::getTreatmentResponse)
+                .map(mapper::mapTreatmentEntityToTreatmentResponse)
                 .collect(Collectors.toList());
         if(!treatmentDTO.isEmpty()){
             return treatmentDTO;
@@ -62,9 +62,9 @@ public class TreatmentServiceImpl implements TreatmentService{
     public TreatmentResponse createTreatment(TreatmentRequest treatmentDTO){
 
         if(patientRepository.existsById(treatmentDTO.getPatientId())) {
-            return mapper.getTreatmentResponse(
+            return mapper.mapTreatmentEntityToTreatmentResponse(
                     treatmentRepository
-                            .save(mapper.getTreatmentEntity(treatmentDTO)));
+                            .save(mapper.mapTreatmentRequestToTreatmentEntity(treatmentDTO)));
         }else{
             throw new PMRecordNotExistsException("No any patients available");
         }
@@ -75,9 +75,9 @@ public class TreatmentServiceImpl implements TreatmentService{
     public TreatmentResponse updatetreatment(TreatmentRequest treatmentDTO){
 
         if(treatmentRepository.existsById(treatmentDTO.getId())) {
-            return mapper.getTreatmentResponse(
+            return mapper.mapTreatmentEntityToTreatmentResponse(
                     treatmentRepository
-                            .save(mapper.getTreatmentEntity(treatmentDTO)));
+                            .save(mapper.mapTreatmentRequestToTreatmentEntity(treatmentDTO)));
         }else{
             throw new PMRecordNotExistsException("No any records available to update");
         }

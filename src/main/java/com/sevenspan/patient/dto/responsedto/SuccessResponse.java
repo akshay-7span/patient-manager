@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SuccessResponse<T> {
 
-    private Enum status;
+    private String  status;
     private String message;
     private T data;
 
     public SuccessResponse(T data){
         this.data=data;
-        this.status= MessageStatus.SUCCESS;
+        this.status= MessageStatus.SUCCESS.getValue();
         this.message="Operation successful";
     }
 }

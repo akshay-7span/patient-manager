@@ -13,4 +13,6 @@ public interface PatientRepositoryCustom {
 
     List<PatientEntity> findByAgeLessThan(Integer age);
 
+    PatientEntity findByPatientXidLazy(String xid);
+
 }

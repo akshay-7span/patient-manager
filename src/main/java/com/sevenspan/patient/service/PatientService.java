@@ -3,6 +3,7 @@ package com.sevenspan.patient.service;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientFilterRequest;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
 import com.sevenspan.patient.dto.responsedto.PatientResponse;
+import com.sevenspan.patient.entity.PatientEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +12,9 @@ public interface PatientService {
 
     public List<PatientResponse> getAllPatients();
 
-    public PatientResponse getPatientById(Long patientId);
+    public PatientResponse getPatientById(String xId);
 
-    public List<PatientResponse> getPatientByDoctorId(Long doctorId, Integer pageNumber, Integer pageSize, String sortBy);
+    public List<PatientResponse> getPatientByDoctorXid(String doctorXid, Integer pageNumber, Integer pageSize, String sortBy);
 
     public List<PatientResponse> getPatientByGivenFilter(PatientFilterRequest patientFilterDTO);
 
@@ -29,11 +30,11 @@ public interface PatientService {
 
     public PatientResponse updatePatient(PatientRequest patientRequestDTO);
 
-    public void deletePatient(Long patientId);
+    public void deletePatient(String xId);
 
     public void updateStatusRequestInactive(String xid);
 
-    public String updateStatusInactive();
+    public void updateStatusInactive();
 
 
 }

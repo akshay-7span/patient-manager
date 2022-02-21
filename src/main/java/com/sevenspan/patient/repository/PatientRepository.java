@@ -20,7 +20,9 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, P
     List<PatientEntity> findByPhoneNumberAndEmail(Long phoneNumber,String email);
 
     //For get result in page
-    Page<PatientEntity> findByDoctorId(Long doctorId, Pageable pageable);
+    Page<PatientEntity> findByDoctorXid(String doctorXid, Pageable pageable);
+
+    PatientEntity findByXid(String xid);
 
     //For check record availability(Query by method name)
     Boolean existsByPhoneNumber(Long phoneNumber);
@@ -28,7 +30,7 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, P
     //For check record availability with "And" condition
     Boolean existsByPhoneNumberAndEmail(Long phoneNumber,String email);
 
-    Boolean existsByxId(String xId);
+    Boolean existsByXid(String xid);
 
     //For original query
     @Query("from patient p where p.email like %?1")
@@ -43,5 +45,9 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, P
     @Modifying
     @Query("update patient set status = 'INACTIVE' where x_id = :xId")
     void updateStatusInactive(@Param("xId") String xId);
+
+    @Modifying
+    @Query("update patient set is_deleted = true where x_id = :xid")
+    void updateStatusIsdeleted(@Param("xid") String xid);
 
 }

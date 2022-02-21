@@ -37,7 +37,16 @@ spring:
       hibernate:
         jdbc:
           #most effective batch size for fast bulk operations is 1000 proved by dzone
-          batch_size : 30
+          batch_size: 30
+  messages:
+    basename: messages
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+#    path: /swagger-ui.html
+#  api-docs:
+#    path: /api-docs
 
 flyway:
   url: jdbc:mysql://localhost:3306/mysql
@@ -56,6 +65,12 @@ feign:
 productrestapi:
   services:
     url: http://localhost:8083
+
+logging:
+  path: logs
+  file: /log.log
+  pattern:
+    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n"
     
 server:
   port: '8083'

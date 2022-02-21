@@ -2,25 +2,19 @@ package com.sevenspan.patient.dto.requestdto.patientdto;
 
 import lombok.Data;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 public class PatientRequest {
 
-    private Long id;
-    private Long doctorId;
+    private String doctorXid;
     private String firstName;
     private String lastName;
-    private Date dateOfBirth;
-    private Integer age;
+    private LocalDate dateOfBirth;
     private String gender;
     private String address;
     private Long phoneNumber;
     private String email;
-    private String marritalStatus;
-    private String prefferedLanguage;
-    private Date dateCreated;
-    private Date dateModified;
-    private String xId;
+    private String xid;
 
 }
