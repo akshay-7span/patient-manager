@@ -68,14 +68,19 @@ public class PatientRepositoryCustomImpl implements PatientRepositoryCustom {
         q.setParameter("xid", xid);
         return (PatientEntity) q.getSingleResult();
 
-//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//        CriteriaQuery q = cb.createQuery(PatientEntity.class);
-//        Root root = q.from(PatientEntity.class);
-//        root.fetch("treatmentEntity", JoinType.INNER);
-//        q.select(root);
-//        q.where(cb.equal(root.get("xid"), xid));
-//
-//        return (PatientEntity) entityManager.createQuery(q).getSingleResult();
+
+    }
+
+    //Criteria Query
+    public PatientEntity findByPatientXidCriteriaQuery(String xid){
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery q = cb.createQuery(PatientEntity.class);
+        Root root = q.from(PatientEntity.class);
+        root.fetch("treatmentEntity", JoinType.INNER);
+        q.select(root);
+        q.where(cb.equal(root.get("xid"), xid));
+
+        return (PatientEntity) entityManager.createQuery(q).getSingleResult();
     }
 
 }

@@ -57,9 +57,9 @@ public class LoggingAspect {
         log.info(object);
     }
 
-//    @AfterThrowing(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", throwing = "ex")
-//    public void afterThrowingMethod(JoinPoint joinPoint, Exception ex) {
-//        log.info(joinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + joinPoint.getSignature().getName() + " -- EXCEPTION");
-//        log.error(ex.getMessage());
-//    }
+    @AfterThrowing(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", throwing = "ex")
+    public void afterThrowingMethod(JoinPoint joinPoint, Exception ex) {
+        log.info(joinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + joinPoint.getSignature().getName() + " -- EXCEPTION");
+        log.error(ex.getMessage());
+    }
 }

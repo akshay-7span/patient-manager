@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -38,10 +41,6 @@ public class PatientServiceImpl implements PatientService {
 
     @Autowired
     MessageSource messageSource;
-
-//    private final String RECORDEXISTS =
-//    private final String RECORDNOTFOUND = messageSource.getMessage("record.notfound", null, null);
-//    private final String SCHEDULERFAIL = messageSource.getMessage("scheduler.patient.status.inactive", null, null);
 
     //Get all the data from patient table
     @Override
@@ -63,24 +62,13 @@ public class PatientServiceImpl implements PatientService {
     //Get the data from patient table by id
     @Override
     public PatientResponse getPatientById(String xid) throws PMRecordNotExistsException {
-
-        if (patientRepository.existsByXid(xid)) {
-
-            List<TreatmentEntity> treatmentEntity=patientRepository.findByXid(xid).getTreatmentEntity();
-            log.info(treatmentEntity.size());
-
-            return mapper.mapPatientEntityToPatientResponse(
-                    patientRepository.findByPatientXidLazy(xid));
-
-//            return patientRepository.findByXid(xid);
-
-//            return mapper.mapPatientEntityToPatientResponse(
-//                    patientRepository.findByXid(xid));
-
-
-        } else {
-            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, null));
+        PatientEntity patientEntity = patientRepository.findByPatientXidLazy(xid);
+        if (Objects.isNull(patientEntity)) {
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
+
+        return mapper.mapPatientEntityToPatientResponse(
+                patientEntity);
     }
 
     //Get the data from patient table by doctorXid

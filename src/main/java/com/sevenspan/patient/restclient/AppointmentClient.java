@@ -1,4 +1,7 @@
 package com.sevenspan.patient.restclient;
 
-public class AppointmentClient {
+import org.springframework.cloud.openfeign.FeignClient;
+
+@FeignClient
+public interface AppointmentClient {
 }

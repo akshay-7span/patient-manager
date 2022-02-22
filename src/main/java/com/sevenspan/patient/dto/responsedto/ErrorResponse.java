@@ -1,7 +1,5 @@
 package com.sevenspan.patient.dto.responsedto;
 
-import com.sevenspan.patient.enums.MessageStatus;
-import com.sevenspan.patient.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

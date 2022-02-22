@@ -2,9 +2,8 @@ package com.sevenspan.patient.restclient;
 
 import com.sevenspan.patient.dto.responsedto.PostsResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
@@ -12,9 +11,9 @@ import java.util.List;
 @FeignClient(name = "postsClient", url = "https://jsonplaceholder.typicode.com/")
 public interface PostsClient {
 
-    @RequestMapping(method = RequestMethod.GET, value = "/posts")
+    @GetMapping(value = "/posts")
     List<PostsResponse> getPosts();
 
-    @RequestMapping(method = RequestMethod.GET, value = "/posts/{postId}", produces = "application/json")
+    @GetMapping(value = "/posts/{postId}", produces = "application/json")
     PostsResponse getPostById(@PathVariable("postId") Long postId);
 }

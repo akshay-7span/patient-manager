@@ -10,12 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 public class PatientManagerApplication {
 
-//  This will stop automatic migration by flyway
-//	@Bean
-//	public FlywayMigrationStrategy flywayMigrationStrategy(){
-//		return args -> {};
-//	}
-
     public static void main(String[] args) {
         SpringApplication.run(PatientManagerApplication.class, args);
     }

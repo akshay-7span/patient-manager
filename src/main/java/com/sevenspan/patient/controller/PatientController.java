@@ -25,8 +25,6 @@ public class PatientController {
 
     @GetMapping(value = "/{id}")
     public PatientResponse getPatientById(@PathVariable("id") String id) throws PMRecordNotExistsException {
-//        List<TreatmentEntity> treatmentEntities=patientRepository.findByXid(id).getTreatmentEntity();
-//        return treatmentEntities;
         return patientService.getPatientById(id);
     }
 
