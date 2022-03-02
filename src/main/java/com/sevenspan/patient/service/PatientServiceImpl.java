@@ -2,16 +2,17 @@ package com.sevenspan.patient.service;
 
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientFilterRequest;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
-import com.sevenspan.patient.dto.responsedto.PatientResponse;
+import com.sevenspan.patient.dto.responsedto.patientresponse.PatientResponse;
+import com.sevenspan.patient.dto.responsedto.patientresponse.PatientStringResponse;
 import com.sevenspan.patient.entity.PatientEntity;
-import com.sevenspan.patient.entity.TreatmentEntity;
 import com.sevenspan.patient.enums.UserStatus;
+import com.sevenspan.patient.exceptions.PMProducerException;
 import com.sevenspan.patient.exceptions.PMRecordExistsException;
 import com.sevenspan.patient.exceptions.PMRecordNotExistsException;
 import com.sevenspan.patient.exceptions.PMSchedulerJobFailed;
 import com.sevenspan.patient.mapper.Mapper;
+import com.sevenspan.patient.producers.PatientProducer;
 import com.sevenspan.patient.repository.PatientRepository;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -42,6 +42,9 @@ public class PatientServiceImpl implements PatientService {
     @Autowired
     MessageSource messageSource;
 
+    @Autowired
+    PatientProducer patientProducer;
+
     //Get all the data from patient table
     @Override
     public List<PatientResponse> getAllPatients() throws PMRecordNotExistsException {
@@ -55,7 +58,7 @@ public class PatientServiceImpl implements PatientService {
         if (!patientDTO.isEmpty()) {
             return patientDTO;
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
@@ -86,7 +89,7 @@ public class PatientServiceImpl implements PatientService {
                     .map(mapper::mapPatientEntityToPatientResponse)
                     .collect(Collectors.toList());
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
@@ -102,7 +105,7 @@ public class PatientServiceImpl implements PatientService {
         if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
@@ -117,7 +120,7 @@ public class PatientServiceImpl implements PatientService {
                     .map(mapper::mapPatientEntityToPatientResponse)
                     .collect(Collectors.toList());
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
@@ -133,7 +136,7 @@ public class PatientServiceImpl implements PatientService {
         if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
@@ -149,7 +152,7 @@ public class PatientServiceImpl implements PatientService {
         if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
@@ -165,53 +168,71 @@ public class PatientServiceImpl implements PatientService {
         if (!patientResponseDTO.isEmpty()) {
             return patientResponseDTO;
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
     //save data in patient table
     @Override
-    public PatientResponse createPatient(PatientRequest patientRequestDTO) throws PMRecordExistsException {
+    public PatientResponse createPatient(PatientRequest patientRequestDTO) throws PMRecordExistsException, PMProducerException {
 
         if (!patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
-            return mapper.mapPatientEntityToPatientResponse(
+            PatientResponse patientResponse = mapper.mapPatientEntityToPatientResponse(
                     patientRepository
                             .save(mapper.mapPatientRequestToPatientEntity(patientRequestDTO)));
+            try {
+                patientProducer.sendMessageJSON(patientResponse);
+            } catch (Exception exception) {
+                throw new PMProducerException(messageSource.getMessage("message.send.callback.failed", null, Locale.US));
+            }
+            return patientResponse;
         } else {
-            throw new PMRecordExistsException("RECORDEXISTS");
+            throw new PMRecordExistsException(messageSource.getMessage("record.exists", new Object[]{"already"}, Locale.US));
         }
     }
 
     //update data in patient table
     @Override
-    public PatientResponse updatePatient(PatientRequest patientRequestDTO) throws PMRecordNotExistsException {
+    public PatientResponse updatePatient(PatientRequest patientRequestDTO) throws PMRecordNotExistsException, PMProducerException {
 
         if (patientRepository.existsByPhoneNumber(patientRequestDTO.getPhoneNumber())) {
-            return mapper.mapPatientEntityToPatientResponse(
+            PatientResponse patientResponse = mapper.mapPatientEntityToPatientResponse(
                     patientRepository
                             .save(mapper.mapPatientRequestToPatientEntity(patientRequestDTO)));
+            try {
+                patientProducer.sendMessageJSON(patientResponse);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+//                throw new PMProducerException(messageSource.getMessage("message.send.callback.failed", null, Locale.US));
+            }
+            return patientResponse;
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
     //delete data from patient table
     @Override
-    public void deletePatient(String xid) {
+    public PatientStringResponse deletePatient(String xid) {
 
         patientRepository.updateStatusIsdeleted(xid);
+        PatientStringResponse patientStringResponse = new PatientStringResponse();
+        patientStringResponse.setMessage(messageSource.getMessage("record.deleted", null, Locale.US));
+        return patientStringResponse;
     }
 
     //Update patient status
     @Override
-    public void updateStatusRequestInactive(String xid) throws PMRecordNotExistsException {
+    public PatientStringResponse updateStatusRequestInactive(String xid) throws PMRecordNotExistsException {
 
         if (patientRepository.existsByXid(xid)) {
             patientRepository.updateStatusRequestInactive(xid);
+            PatientStringResponse patientStringResponse = new PatientStringResponse();
+            patientStringResponse.setMessage(messageSource.getMessage("record.status.updated", null, Locale.US));
+            return patientStringResponse;
         } else {
-            throw new PMRecordNotExistsException("RECORDNOTFOUND");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
-
     }
 
     //Schedule job to update status to of patient inactive
@@ -225,7 +246,7 @@ public class PatientServiceImpl implements PatientService {
                 patientRepository.saveAll(patientEntityList);
             }
         } catch (Exception e) {
-            throw new PMSchedulerJobFailed("SCHEDULERFAIL");
+            throw new PMSchedulerJobFailed(messageSource.getMessage("scheduler.patient.status.inactive", null, Locale.US));
         }
     }
 

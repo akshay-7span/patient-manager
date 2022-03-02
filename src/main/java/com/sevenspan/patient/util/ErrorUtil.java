@@ -15,13 +15,11 @@ public class ErrorUtil {
     @ExceptionHandler(value = {Exception.class})
     public ErrorResponse errorResponse(Exception exception){
         log.info("Default exception entry.......................");
-        ErrorResponse messageDTO=new ErrorResponse(
+        exception.printStackTrace();
+        return new ErrorResponse(
                 MessageStatus.FAILURE.getValue(),
                 exception.getMessage(),
                 exception.getStackTrace());
-
-        //exception.printStackTrace();
-        return messageDTO;
     }
 
     @ExceptionHandler(value = {PMRecordExistsException.class})

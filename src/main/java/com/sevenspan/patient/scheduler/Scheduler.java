@@ -1,5 +1,6 @@
 package com.sevenspan.patient.scheduler;
 
+import com.sevenspan.patient.exceptions.PMSchedulerJobFailed;
 import com.sevenspan.patient.service.PatientService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class Scheduler {
     PatientService patientService;
 
     @Scheduled(cron = "0 0 0 * * ?")
-    public void updateStatusInactive() {
+    public void updateStatusInactive() throws PMSchedulerJobFailed {
         patientService.updateStatusInactive();
     }
 }

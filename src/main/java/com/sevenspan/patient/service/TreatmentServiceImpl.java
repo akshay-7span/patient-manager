@@ -9,9 +9,11 @@ import com.sevenspan.patient.repository.TreatmentRepository;
 import lombok.SneakyThrows;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,11 +25,13 @@ public class TreatmentServiceImpl implements TreatmentService{
     @Autowired
     PatientRepository patientRepository;
 
+    @Autowired
+    MessageSource messageSource;
+
     private Mapper mapper= Mappers.getMapper(Mapper.class);
 
     //Get all the data from treatment table
-    @SneakyThrows(PMRecordNotExistsException.class)
-    public List<TreatmentResponse> getAllTreatment(){
+    public List<TreatmentResponse> getAllTreatment() throws PMRecordNotExistsException {
 
         List<TreatmentResponse> treatmentDTO=treatmentRepository
                 .findAll()
@@ -37,13 +41,12 @@ public class TreatmentServiceImpl implements TreatmentService{
         if(!treatmentDTO.isEmpty()) {
             return treatmentDTO;
         }else{
-            throw new PMRecordNotExistsException("No any records available");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
     //Get the data from treatment table by patientId
-    @SneakyThrows(PMRecordNotExistsException.class)
-    public List<TreatmentResponse> getTreatmentByPatientId(Long patientId){
+    public List<TreatmentResponse> getTreatmentByPatientId(Long patientId) throws PMRecordNotExistsException {
         List<TreatmentResponse> treatmentDTO=treatmentRepository
                 .findByPatientId(patientId)
                 .stream()
@@ -53,33 +56,31 @@ public class TreatmentServiceImpl implements TreatmentService{
             return treatmentDTO;
         }
         else{
-            throw new PMRecordNotExistsException("No any records available");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
     //save data in treatment table
-    @SneakyThrows(PMRecordNotExistsException.class)
-    public TreatmentResponse createTreatment(TreatmentRequest treatmentDTO){
+    public TreatmentResponse createTreatment(TreatmentRequest treatmentDTO) throws PMRecordNotExistsException {
 
         if(patientRepository.existsById(treatmentDTO.getPatientId())) {
             return mapper.mapTreatmentEntityToTreatmentResponse(
                     treatmentRepository
                             .save(mapper.mapTreatmentRequestToTreatmentEntity(treatmentDTO)));
         }else{
-            throw new PMRecordNotExistsException("No any patients available");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 
     //update data in treatment table
-    @SneakyThrows(PMRecordNotExistsException.class)
-    public TreatmentResponse updatetreatment(TreatmentRequest treatmentDTO){
+    public TreatmentResponse updatetreatment(TreatmentRequest treatmentDTO) throws PMRecordNotExistsException {
 
         if(treatmentRepository.existsById(treatmentDTO.getId())) {
             return mapper.mapTreatmentEntityToTreatmentResponse(
                     treatmentRepository
                             .save(mapper.mapTreatmentRequestToTreatmentEntity(treatmentDTO)));
         }else{
-            throw new PMRecordNotExistsException("No any records available to update");
+            throw new PMRecordNotExistsException(messageSource.getMessage("record.notfound", new Object[]{"not"}, Locale.US));
         }
     }
 }

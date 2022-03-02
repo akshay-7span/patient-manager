@@ -11,9 +11,18 @@ import org.springframework.stereotype.Component;
 @Log4j2
 public class LoggingAspect {
 
-    @Before("com.sevenspan.patient.aspect.PointCut.controllerPointCut() " +
-            "|| com.sevenspan.patient.aspect.PointCut.servicePointCut() " +
-            "|| com.sevenspan.patient.aspect.PointCut.schedulerPointCut()")
+    //Pointcuts
+    @Pointcut("execution(* com.sevenspan.patient.controller..*.*(..))")
+    public void controllerPointCut(){}
+
+    @Pointcut("execution(* com.sevenspan.patient.service..*.*(..))")
+    public void servicePointCut(){}
+
+    @Pointcut("execution(* com.sevenspan.patient.scheduler..*.*(..))")
+    public void schedulerPointCut(){}
+
+    //Aspects
+    @Before("controllerPointCut() || servicePointCut() || schedulerPointCut()")
     public void beforeMethod(JoinPoint joinPoint) {
 
         //Displaying class name and method name
@@ -27,9 +36,7 @@ public class LoggingAspect {
         }
     }
 
-    @After("com.sevenspan.patient.aspect.PointCut.controllerPointCut() " +
-            "|| com.sevenspan.patient.aspect.PointCut.servicePointCut() " +
-            "|| com.sevenspan.patient.aspect.PointCut.schedulerPointCut()")
+    @After("controllerPointCut() || servicePointCut() || schedulerPointCut()")
     public void afterMethod(JoinPoint joinPoint) {
 
         //Displaying class name and method name
@@ -37,7 +44,7 @@ public class LoggingAspect {
 
     }
 
-    @Around("com.sevenspan.patient.aspect.PointCut.controllerPointCut()")
+    @Around("controllerPointCut()")
     public Object aroundMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
         //Displaying Method Argument
@@ -52,12 +59,12 @@ public class LoggingAspect {
         return proceedingJoinPoint.proceed();
     }
 
-    @AfterReturning(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", returning = "object")
+    @AfterReturning(pointcut = "controllerPointCut()", returning = "object")
     public void afterReturningMethod(Object object) {
         log.info(object);
     }
 
-    @AfterThrowing(pointcut = "com.sevenspan.patient.aspect.PointCut.controllerPointCut()", throwing = "ex")
+    @AfterThrowing(pointcut = "controllerPointCut()",throwing = "ex")
     public void afterThrowingMethod(JoinPoint joinPoint, Exception ex) {
         log.info(joinPoint.getSignature().getDeclaringType().getSimpleName() + " @" + joinPoint.getSignature().getName() + " -- EXCEPTION");
         log.error(ex.getMessage());

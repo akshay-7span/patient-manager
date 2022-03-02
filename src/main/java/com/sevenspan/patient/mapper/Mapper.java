@@ -2,7 +2,7 @@ package com.sevenspan.patient.mapper;
 
 import com.sevenspan.patient.dto.requestdto.TreatmentRequest;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
-import com.sevenspan.patient.dto.responsedto.PatientResponse;
+import com.sevenspan.patient.dto.responsedto.patientresponse.PatientResponse;
 import com.sevenspan.patient.dto.responsedto.TreatmentResponse;
 import com.sevenspan.patient.entity.PatientEntity;
 import com.sevenspan.patient.entity.TreatmentEntity;

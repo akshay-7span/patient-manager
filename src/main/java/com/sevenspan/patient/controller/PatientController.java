@@ -2,9 +2,13 @@ package com.sevenspan.patient.controller;
 
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientFilterRequest;
 import com.sevenspan.patient.dto.requestdto.patientdto.PatientRequest;
-import com.sevenspan.patient.dto.responsedto.PatientResponse;
+import com.sevenspan.patient.dto.responsedto.ProducerResponse;
+import com.sevenspan.patient.dto.responsedto.patientresponse.PatientResponse;
+import com.sevenspan.patient.dto.responsedto.patientresponse.PatientStringResponse;
+import com.sevenspan.patient.exceptions.PMProducerException;
 import com.sevenspan.patient.exceptions.PMRecordExistsException;
 import com.sevenspan.patient.exceptions.PMRecordNotExistsException;
+import com.sevenspan.patient.service.MessageService;
 import com.sevenspan.patient.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +21,9 @@ public class PatientController {
 
     @Autowired
     PatientService patientService;
+
+    @Autowired
+    MessageService messageService;
 
     @GetMapping(value = "/")
     public List<PatientResponse> getAllPatients() throws PMRecordNotExistsException {
@@ -67,24 +74,32 @@ public class PatientController {
     }
 
     @PostMapping(value = "/")
-    public PatientResponse createPatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordExistsException {
+    public PatientResponse createPatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordExistsException, PMProducerException {
         return patientService.createPatient(patientRequestDTO);
     }
 
     @PutMapping(value = "/")
-    public PatientResponse updatePatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordNotExistsException {
+    public PatientResponse updatePatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordNotExistsException, PMProducerException {
         return patientService.updatePatient(patientRequestDTO);
     }
 
     @PutMapping(value = "/delete/")
-    public String deletePatient(@RequestParam("xId") String xId) {
-        patientService.deletePatient(xId);
-        return "Data deleted successfully";
+    public PatientStringResponse deletePatient(@RequestParam("xId") String xId) {
+        return patientService.deletePatient(xId);
     }
 
     @PutMapping(value = "/request-account-inactivation")
-    public String updateStatus(@RequestParam("xId") String xId) throws PMRecordNotExistsException {
-        patientService.updateStatusRequestInactive(xId);
-        return "Status updated successfully";
+    public PatientStringResponse updateStatus(@RequestParam("xId") String xId) throws PMRecordNotExistsException {
+        return patientService.updateStatusRequestInactive(xId);
+    }
+
+    @GetMapping(value = "/publish-message/{message}")
+    public PatientStringResponse publishMessage(@PathVariable("message") String message){
+        return messageService.publishMessage(message);
+    }
+
+    @GetMapping(value = "/publish-message-with-callback/{message}")
+    public ProducerResponse publishMessageWithCallBack(@PathVariable("message") String message){
+        return messageService.publishMessageWithCallBack(message);
     }
 }

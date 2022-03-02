@@ -2,11 +2,11 @@ package com.sevenspan.patient.dto.responsedto;
 
 import com.sevenspan.patient.enums.MessageStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 public class SuccessResponse<T> {
 

@@ -1,5 +1,6 @@
-package com.sevenspan.patient.dto.responsedto;
+package com.sevenspan.patient.dto.responsedto.patientresponse;
 
+import com.sevenspan.patient.dto.responsedto.TreatmentResponse;
 import lombok.Data;
 
 import java.sql.Date;
