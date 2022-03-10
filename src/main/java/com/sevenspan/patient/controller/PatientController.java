@@ -59,8 +59,8 @@ public class PatientController {
     }
 
     @GetMapping(value = "/filter/")
-    public List<PatientResponse> getPatientByGivenFilter(@RequestBody PatientFilterRequest patientFilterDTO) throws PMRecordNotExistsException {
-        return patientService.getPatientByGivenFilter(patientFilterDTO);
+    public List<PatientResponse> getPatientByGivenFilter(@RequestBody PatientFilterRequest patientFilterRequest) throws PMRecordNotExistsException {
+        return patientService.getPatientByGivenFilter(patientFilterRequest);
     }
 
     @GetMapping(value = "/filter-email")
@@ -74,13 +74,13 @@ public class PatientController {
     }
 
     @PostMapping(value = "/")
-    public PatientResponse createPatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordExistsException, PMProducerException {
-        return patientService.createPatient(patientRequestDTO);
+    public PatientResponse createPatient(@RequestBody PatientRequest patientRequest) throws PMRecordExistsException, PMProducerException {
+        return patientService.createPatient(patientRequest);
     }
 
     @PutMapping(value = "/")
-    public PatientResponse updatePatient(@RequestBody PatientRequest patientRequestDTO) throws PMRecordNotExistsException, PMProducerException {
-        return patientService.updatePatient(patientRequestDTO);
+    public PatientResponse updatePatient(@RequestBody PatientRequest patientRequest) throws PMRecordNotExistsException, PMProducerException {
+        return patientService.updatePatient(patientRequest);
     }
 
     @PutMapping(value = "/delete/")
