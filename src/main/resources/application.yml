@@ -1,0 +1,79 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    health:
+      sensitive: 'false'
+  health:
+    defaults:
+      enabled: 'true'
+    db:
+      enabled: 'true'
+  endpoint:
+    health:
+      show-details: always
+
+spring:
+  application:
+    name: patient-manager
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    password: root
+    username: root
+    url: jdbc:mysql://localhost:3306/patient
+  mvc:
+    throw-exception-if-no-handler-found: 'true'
+  resources:
+    add-mappings: 'false'
+  profiles:
+    active: 'dev'
+  flyway:
+    locations: classpath:db/migration/common,classpath:db/migration/dev
+    enabled: 'true'
+    sql-migration-prefix: "PSB-"
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          #most effective batch size for fast bulk operations is 1000 proved by dzone
+          batch_size: 30
+  messages:
+    basename: messages
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+#    path: /swagger-ui.html
+#  api-docs:
+#    path: /api-docs
+
+flyway:
+  url: jdbc:mysql://localhost:3306/mysql
+  schemas: patient
+  user: "root"
+  password: "root"
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+logging:
+  path: logs
+  file: /log.log
+  pattern:
+    file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n"
+
+kafka:
+  url: "127.0.0.1:9092"
+
+productrestapi:
+  services:
+    url: http://localhost:8083
+    
+server:
+  port: '8083'
